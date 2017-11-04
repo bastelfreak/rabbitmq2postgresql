@@ -1,4 +1,5 @@
 require 'bunny'
+require 'sequel'
 
 # connection settings for our rabbitmq
 # replace guest/guest with the credentials that marcel and tim have
@@ -29,9 +30,23 @@ queue.bind('marcelliitest')
 # queue.pop
 # or: queue.get
 
+## database stuff
+DB = Sequel.connect('postgres://bigdata@localhost:5432/bigdata', logger: Logger.new('log/db.log'))
+#DB.create_table :payloads do
+#  primary_key :id
+#  String :metadata_info
+#  String :delivery_info
+#  String :payload
+#end
+
+require './payload.rb'
 # create a continious bind as a consumer to our queue
 queue.subscribe do |delivery_info, metadata, payload|
-  puts "delivery_info: #{delivery_info}"
-  puts "metadata: #{metadata}"
-  puts "payload #{payload}"
+  #puts "delivery_info: #{delivery_info}"
+  #puts "metadata: #{metadata}"
+  puts "payload: #{payload}"
+  Payload.new(delivery_info: delivery_info, metadata_info: metadata, payload: payload).save
+end
+loop do
+  sleep 10
 end

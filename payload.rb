@@ -1,2 +1,2 @@
-class Payload < ApplicationRecord
+class Payload < Sequel::Model
 end
