@@ -1,4 +1,0 @@
-development:
-  adapter: postgresql
-  database: bigdata
-  username: bigdata
