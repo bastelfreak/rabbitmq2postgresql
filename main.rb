@@ -56,12 +56,12 @@ require './payload.rb'
 require './payloadjsonb.rb'
 # create a continious bind as a consumer to our queue
 queue.subscribe do |delivery_info, metadata, payload|
-  #puts "delivery_info: #{delivery_info}"
-  #puts "metadata: #{metadata}"
-  #puts "payload: #{payload}"
+  # puts "delivery_info: #{delivery_info}"
+  # puts "metadata: #{metadata}"
+  # puts "payload: #{payload}"
   Payloadjsonb.new(delivery_info: delivery_info, metadata_info: metadata, payload: payload).save
 end
 loop do
-  #puts "message count: #{queue.message_count}"
+  # puts "message count: #{queue.message_count}"
   sleep 10
 end
