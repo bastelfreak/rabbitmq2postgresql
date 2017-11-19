@@ -2,8 +2,10 @@ AllCops:
   TargetRubyVersion: 2.4
   Include:
     - main.rb
+    - payload.rb
   Exclude:
     - Gemfile
+    - Rakefile
 Lint/ConditionPosition:
   Enabled: True
 
