@@ -3,20 +3,12 @@
 require 'bunny'
 require 'sequel'
 
-# connection settings for our rabbitmq
-# replace guest/guest with the credentials that marcel and tim have
-connection_details = {
-  host: 'ci-slave1.virtapi.org',
-  port: 5672,
-  ssl: false,
-  vhost: '/',
-  user: 'guest',
-  pass: 'guest',
-  auth_mechanism: 'PLAIN'
-}
+# connection settings for our rabbitmq and for postgres are stored in a
+# seperate file
+require './credentials.rb'
 
 # create the object conn from the class Bunny
-conn = Bunny.new(connection_details)
+conn = Bunny.new(connection_details_rabbitmq)
 # connect (TCP connection) to rabbitmq
 conn.start
 # create a communication channel
@@ -33,7 +25,7 @@ queue.bind('marcelliitest')
 # or: queue.get
 
 ## database stuff
-DB = Sequel.connect('postgres://bigdata@localhost:5432/bigdata', logger: Logger.new('log/db.log'))
+DB = Sequel.connect(connection_details_postgres, logger: Logger.new('log/db.log'))
 # DB.create_table :payloads do
 #  primary_key :id
 #  String :metadata_info
@@ -50,5 +42,6 @@ queue.subscribe do |delivery_info, metadata, payload|
   Payload.new(delivery_info: delivery_info, metadata_info: metadata, payload: payload).save
 end
 loop do
+  puts "message count: #{queue.message_count}"
   sleep 10
 end
